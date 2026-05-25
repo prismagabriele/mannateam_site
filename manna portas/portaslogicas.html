@@ -1,0 +1,295 @@
+<?php
+// Obtém o protocolo e o domínio atual para gerar o QR Code dinamicamente
+$protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$url_atual = $protocolo . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+// API pública para gerar o QR Code da URL atual
+$qrcode_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($url_atual);
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manna Team & Portas Lógicas</title>
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --bg-dark: rgba(10, 10, 25, 0.9);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            background: url('fundo1.jpg') no-repeat center center fixed, 
+                        url('fundo2.jpg') no-repeat center center fixed, #0a0a19;
+            background-size: cover;
+            background-blend-mode: overlay;
+        }
+
+        header {
+            background: var(--bg-dark);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        section {
+            background: var(--bg-dark);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .grid-portas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card-porta {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .card-porta:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .logic-img {
+            width: 120px;
+            height: auto;
+            margin: 10px 0;
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+
+        /* Calculadora/Somador */
+        .flex-calc {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+
+        select, button {
+            background: #151530;
+            color: #fff;
+            border: 1px solid var(--primary);
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--primary);
+            color: #0a0a19;
+        }
+
+        .resultado {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+
+        /* Mini Game */
+        .game-box {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+        }
+
+        /* QR Code Flutuante */
+        .qrcode-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,255,204,0.5);
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        .qrcode-container img {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Manna Team & Portas Lógicas</h1>
+    <p>Tecnologia e Inovação ao seu alcance</p>
+</header>
+
+<div class="container">
+
+    <section>
+        <h2>O que é o Manna?</h2>
+        <p>O <strong>Manna Team</strong> é uma rede de pesquisadores e estudantes focada em transformar vidas através da educação, robótica, internet das coisas (IoT) e divulgação científica, preparando o futuro da tecnologia.</p>
+    </section>
+
+    <section>
+        <h2>O que são Portas Lógicas?</h2>
+        <p>São circuitos eletrônicos que operam com sinais digitais baseados na álgebra booleana. Elas tomam decisões retornando <strong>0 (Falso)</strong> ou <strong>1 (Verdadeiro)</strong> dependendo das suas entradas.</p>
+    </section>
+
+    <section>
+        <h2>As 4 Principais Portas Lógicas</h2>
+        <div class="grid-portas">
+            <div class="card-porta">
+                <h3>AND (E)</h3>
+                <svg class="logic-img" viewBox="0 0 100 50"><path d="M10,10 H50 A15,15 0 0,1 50,40 H10 Z" fill="none" stroke="#00ffcc" stroke-width="3"/><line x1="5" y1="18" x2="10" y2="18" stroke="#00ffcc" stroke-width="3"/><line x1="5" y1="32" x2="10" y2="32" stroke="#00ffcc" stroke-width="3"/><line x1="65" y1="25" x2="75" y2="25" stroke="#00ffcc" stroke-width="3"/></svg>
+                <p>Retorna 1 apenas se TODAS as entradas forem 1.</p>
+            </div>
+            <div class="card-porta">
+                <h3>OR (OU)</h3>
+                <svg class="logic-img" viewBox="0 0 100 50"><path d="M10,10 Q35,10 55,25 Q35,40 10,40 Q25,25 10,10 Z" fill="none" stroke="#00ffcc" stroke-width="3"/><line x1="5" y1="18" x2="16" y2="18" stroke="#00ffcc" stroke-width="3"/><line x1="5" y1="32" x2="16" y2="32" stroke="#00ffcc" stroke-width="3"/><line x1="55" y1="25" x2="65" y2="25" stroke="#00ffcc" stroke-width="3"/></svg>
+                <p>Retorna 1 se PELO MENOS UMA entrada for 1.</p>
+            </div>
+            <div class="card-porta">
+                <h3>NOT (NÃO)</h3>
+                <svg class="logic-img" viewBox="0 0 100 50"><polygon points="20,10 50,25 20,40" fill="none" stroke="#00ffcc" stroke-width="3"/><circle cx="54" cy="25" r="4" fill="none" stroke="#00ffcc" stroke-width="3"/><line x1="10" y1="25" x2="20" y2="25" stroke="#00ffcc" stroke-width="3"/><line x1="58" y1="25" x2="68" y2="25" stroke="#00ffcc" stroke-width="3"/></svg>
+                <p>Inverte o sinal de entrada (0 vira 1, 1 vira 0).</p>
+            </div>
+            <div class="card-porta">
+                <h3>XOR (OU Exclusivo)</h3>
+                <svg class="logic-img" viewBox="0 0 100 50"><path d="M15,10 Q40,10 60,25 Q40,40 15,40 Q30,25 15,10 Z" fill="none" stroke="#00ffcc" stroke-width="3"/><path d="M8,10 Q23,25 8,40" fill="none" stroke="#00ffcc" stroke-width="3"/><line x1="2" y1="18" x2="12" y2="18" stroke="#00ffcc" stroke-width="3"/><line x1="2" y1="32" x2="12" y2="32" stroke="#00ffcc" stroke-width="3"/><line x1="60" y1="25" x2="70" y2="25" stroke="#00ffcc" stroke-width="3"/></svg>
+                <p>Retorna 1 apenas se as entradas forem DIFERENTES.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Simulador Interativo</h2>
+        <p>Escolha os bits de entrada e a porta lógica para calcular o resultado em tempo real:</p>
+        <div class="flex-calc">
+            <select id="inputA">
+                <option value="0">0</option>
+                <option value="1">1</option>
+            </select>
+            
+            <select id="operador">
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+                <option value="XOR">XOR</option>
+                <option value="NOT">NOT (Usa apenas Entrada A)</option>
+            </select>
+
+            <select id="inputB">
+                <option value="0">0</option>
+                <option value="1">1</option>
+            </select>
+
+            <button onclick="calcularPorta()">=</button>
+            <div class="resultado" id="resultadoSimulador">0</div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Desafio Lógico (Mini Game)</h2>
+        <div class="game-box">
+            <p id="pergunta-game">Carregando desafio...</p>
+            <button onclick="verificarResposta(1)">1 (Verdadeiro)</button>
+            <button onclick="verificarResposta(0)">0 (Falso)</button>
+            <p id="feedback-game" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+    </section>
+</div>
+
+<div class="qrcode-container">
+    <img src="<?php echo $qrcode_url; ?>" alt="QR Code">
+    Acesse no Celular
+</div>
+
+<script>
+    // Lógica do Simulador
+    function calcularPorta() {
+        const a = parseInt(document.getElementById('inputA').value);
+        const b = parseInt(document.getElementById('inputB').value);
+        const op = document.getElementById('operador').value;
+        let res = 0;
+
+        switch(op) {
+            case 'AND': res = a && b; break;
+            case 'OR':  res = a || b; break;
+            case 'XOR': res = a !== b; break;
+            case 'NOT': res = !a; break;
+        }
+
+        document.getElementById('resultadoSimulador').innerText = res ? 1 : 0;
+    }
+
+    // Ocultar a segunda entrada caso a porta NOT seja selecionada
+    document.getElementById('operador').addEventListener('change', function() {
+        document.getElementById('inputB').style.display = this.value === 'NOT' ? 'none' : 'inline-block';
+    });
+
+    // Lógica do Mini Game
+    let respostaCorreta;
+    
+    function gerarDesafio() {
+        const portas = ['AND', 'OR', 'XOR', 'NOT'];
+        const portaSorteada = portas[Math.floor(Math.random() * portas.length)];
+        const a = Math.floor(Math.random() * 2);
+        const b = Math.floor(Math.random() * 2);
+        
+        let pergunta = "";
+        
+        if(portaSorteada === 'NOT') {
+            pergunta = `Qual o resultado de NOT ${a}?`;
+            respostaCorreta = !a ? 1 : 0;
+        } else {
+            pergunta = `Qual o resultado de ${a} ${portaSorteada} ${b}?`;
+            if(portaSorteada === 'AND') respostaCorreta = (a && b) ? 1 : 0;
+            if(portaSorteada === 'OR')  respostaCorreta = (a || b) ? 1 : 0;
+            if(portaSorteada === 'XOR') respostaCorreta = (a !== b) ? 1 : 0;
+        }
+        
+        document.getElementById('pergunta-game').innerText = pergunta;
+        document.getElementById('feedback-game').innerText = "";
+    }
+
+    function verificarResposta(chute) {
+        const feedback = document.getElementById('feedback-game');
+        if(chute === respostaCorreta) {
+            feedback.innerHTML = "<span style='color: #00ffcc;'>Acertou! Parabéns! 🎉</span>";
+            setTimeout(gerarDesafio, 1500);
+        } else {
+            feedback.innerHTML = "<span style='color: #ff3366;'>Errado... Tente novamente! ❌</span>";
+        }
+    }
+
+    // Inicia o primeiro jogo ao carregar
+    gerarDesafio();
+</script>
+
+</body>
+</html>
